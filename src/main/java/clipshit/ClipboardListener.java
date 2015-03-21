@@ -1,6 +1,8 @@
 package clipshit;
 
-import java.awt.*;
+import org.jsoup.Jsoup;
+
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -28,13 +30,13 @@ public class ClipboardListener extends Thread {
             @Override
             public void run() {
                 try {
-                    String contents = (String) clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor);
+                    String contents = Jsoup.parse((String) clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor)).text();
                     System.out.println("Original:  " + contents);
-//                    contents = RandomFormatter.format(contents);
+                    contents = RandomFormatter.format(contents);
 
                     // set clipboard's contents with new formatted stuff
                     Transferable t = new HtmlSelection(contents);
-                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(t, null);
+                    clipboard.setContents(t, null);
 
                     System.out.println("Formatted:  " + contents);
                     System.out.println();
@@ -55,7 +57,7 @@ public class ClipboardListener extends Thread {
 
     public void disable() {
         System.out.println("DISABLED.");
-        cancelObject.cancel(false);
+        cancelObject.cancel(true);
     }
 
     private static class HtmlSelection implements Transferable {
