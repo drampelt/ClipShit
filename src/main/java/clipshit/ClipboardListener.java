@@ -2,7 +2,7 @@ package clipshit;
 
 import org.jsoup.Jsoup;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -30,16 +30,23 @@ public class ClipboardListener extends Thread {
             @Override
             public void run() {
                 try {
-                    String contents = Jsoup.parse((String) clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor)).text();
-                    System.out.println("Original:  " + contents);
-                    contents = RandomFormatter.format(contents);
+                    if(clipboard.isDataFlavorAvailable(DataFlavor.imageFlavor)) {
+                        Image contents = (Image) clipboard.getContents(this).getTransferData(DataFlavor.imageFlavor);
+                        // add watermark to image here
+                        Transferable t = new ImageTransferable(contents);
+                        clipboard.setContents(t, null);
+                    } else {
+                        String contents = Jsoup.parse((String) clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor)).text();
+                        System.out.println("Original:  " + contents);
+                        contents = RandomFormatter.format(contents);
 
-                    // set clipboard's contents with new formatted stuff
-                    Transferable t = new HtmlSelection(contents);
-                    clipboard.setContents(t, null);
+                        // set clipboard's contents with new formatted stuff
+                        Transferable t = new HtmlTransferable(contents);
+                        clipboard.setContents(t, null);
 
-                    System.out.println("Formatted:  " + contents);
-                    System.out.println();
+                        System.out.println("Formatted:  " + contents);
+                        System.out.println();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -60,7 +67,7 @@ public class ClipboardListener extends Thread {
         cancelObject.cancel(true);
     }
 
-    private static class HtmlSelection implements Transferable {
+    private static class HtmlTransferable implements Transferable {
         private static ArrayList htmlFlavors = new ArrayList();
         private String html;
 
@@ -74,7 +81,7 @@ public class ClipboardListener extends Thread {
             }
         }
 
-        public HtmlSelection(String html) {
+        public HtmlTransferable(String html) {
             this.html = html;
         }
 
@@ -98,6 +105,30 @@ public class ClipboardListener extends Thread {
             }
 
             throw new UnsupportedFlavorException(flavor);
+        }
+    }
+
+    static class ImageTransferable implements Transferable {
+        private Image image;
+
+        public ImageTransferable(Image image) {
+            this.image = image;
+        }
+
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+            if (isDataFlavorSupported(flavor)) {
+                return image;
+            } else {
+                throw new UnsupportedFlavorException(flavor);
+            }
+        }
+
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return flavor == DataFlavor.imageFlavor;
+        }
+
+        public DataFlavor[] getTransferDataFlavors() {
+            return new DataFlavor[] { DataFlavor.imageFlavor };
         }
     }
 }
