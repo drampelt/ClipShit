@@ -3,7 +3,7 @@ package clipshit;
 import java.awt.*;
 import java.awt.datatransfer.*;
 
-public class ClipboardListener {
+public class ClipboardListener implements ClipboardOwner {
     private static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
     private FlavorListener listener;
 
@@ -41,5 +41,10 @@ public class ClipboardListener {
     public void disable() {
         System.out.println("DISABLED.");
         clipboard.removeFlavorListener(listener);
+    }
+
+    @Override
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+        listener.flavorsChanged(new FlavorEvent(clipboard));
     }
 }
