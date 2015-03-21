@@ -2,49 +2,27 @@ package clipshit;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class ClipboardListener implements ClipboardOwner {
-    private static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-    private FlavorListener listener;
-
-    public ClipboardListener() {
-        listener = new FlavorListener() {
-            @Override
-            public void flavorsChanged(FlavorEvent e) {
-                System.out.println("changed!!! " + e.getSource() + " " + e.toString());
-                processClipboard();
-            }
-        };
-
-        enable();
-    }
-
-    public void enable() {
-        System.out.println("ENABLED.  Listening...");
-        clipboard.addFlavorListener(listener);
-    }
-
-    private void processClipboard() {
-        String tempText;
-        Transferable contents = clipboard.getContents(this);
-
-        try {
-            if(contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                tempText = (String) contents.getTransferData(DataFlavor.stringFlavor);
-                System.out.println("TEXT:  " + tempText);
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void disable() {
-        System.out.println("DISABLED.");
-        clipboard.removeFlavorListener(listener);
-    }
+public class ClipboardListener extends Thread {
+    private static Clipboard clipboard;
 
     @Override
-    public void lostOwnership(Clipboard clipboard, Transferable contents) {
-        listener.flavorsChanged(new FlavorEvent(clipboard));
+    public void run() {
+        clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println((String) clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 1, TimeUnit.SECONDS);
     }
 }
