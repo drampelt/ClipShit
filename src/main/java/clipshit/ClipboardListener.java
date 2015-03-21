@@ -32,7 +32,7 @@ public class ClipboardListener extends Thread {
                 try {
                     if(clipboard.isDataFlavorAvailable(DataFlavor.imageFlavor)) {
                         Image contents = (Image) clipboard.getContents(this).getTransferData(DataFlavor.imageFlavor);
-                        // add watermark to image here
+                        contents = ImageWatermarker.watermark(contents);
                         Transferable t = new ImageTransferable(contents);
                         clipboard.setContents(t, null);
                     } else {
