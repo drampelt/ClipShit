@@ -1,51 +1,97 @@
 package clipshit;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.*;
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
 
 /**
  * Created by daniel on 2015-03-21.
  */
-public class Main extends Thread implements ClipboardOwner {
-    private static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-
-    @Override
-    public void lostOwnership(Clipboard c, Transferable c) {
-        System.out.println("Lost ownership of clipboard.");
-    }
-
-    @Override
-    public void run() {
-        Transferable contents = clipboard.getContents(this);
-        regainOwnership(contents);
-        System.out.println("Listening to clipboard");
-        while(true) {}
-    }
-
-    public static void sivasMain(String[] args) {
-        Main listener = new Main();
-        listener.start();
-    }
+public class Main {
 
     public static void main(String[] args) {
-        String result = null;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                createAndShowGUI();
+            }
+        });
+    }
+
+    private static boolean enabled = false;
+
+    private static void createAndShowGUI() {
+        if(!SystemTray.isSupported()) {
+            System.out.println("Sorry we need your system tray bro");
+            System.exit(1);
+        }
+
+        final PopupMenu popup = new PopupMenu();
+        final TrayIcon trayIcon = new TrayIcon(createImage("main/clipshit.png", "Tray Icon"));
+
+        final SystemTray tray = SystemTray.getSystemTray();
+
+        MenuItem exit = new MenuItem("Exit");
+        MenuItem status = new MenuItem("Status: Disabled");
+        MenuItem toggle = new MenuItem("Enable");
+        status.setEnabled(false);
+
+        popup.add(status);
+        popup.add(toggle);
+        popup.addSeparator();
+        popup.add(exit);
+
+        trayIcon.setPopupMenu(popup);
 
         try {
-            result = (String) clipboard.getData(DataFlavor.stringFlavor);
-        } catch (UnsupportedFlavorException e) {
+            tray.add(trayIcon);
+        } catch (AWTException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            System.exit(1);
         }
-        try {
-            result = (String) clipboard.getData(DataFlavor.allHtmlFlavor);
-        } catch (UnsupportedFlavorException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(result);
+
+        trayIcon.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "ayy lmao");
+            }
+        });
+
+        toggle.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(enabled) {
+                    toggle.setLabel("Enable");
+                    status.setLabel("Status: Disabled");
+                } else {
+                    toggle.setLabel("Disable");
+                    status.setLabel("Status: Enabled");
+                }
+            }
+        });
+
+        exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tray.remove(trayIcon);
+                System.exit(0);
+            }
+        });
     }
+
+    protected static Image createImage(String path, String description) {
+        System.out.println( Main.class.getResource(Main.class.getSimpleName() + ".class") );
+        URL imageURL = Main.class.getResource(path);
+
+        if (imageURL == null) {
+            System.err.println("Resource not found: " + path);
+            return new ImageIcon(path, description).getImage();
+        } else {
+            return (new ImageIcon(imageURL, description)).getImage();
+        }
+    }
+
 }
 

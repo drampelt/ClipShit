@@ -11,7 +11,23 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = "Main"
+mainClassName = "clipshit.Main"
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/java'
+        }
+        resources {
+            srcDir 'src/resources'
+        }
+    }
+}
+
+//task copyResources {
+//    from 'src/main/resources'
+//    into 'build/resources'
+//}
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -22,8 +38,6 @@ repositories {
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    // The production code uses the SLF4J logging API at compile time
-    compile 'org.slf4j:slf4j-api:1.7.7'
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the
