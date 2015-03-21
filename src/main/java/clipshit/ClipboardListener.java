@@ -30,7 +30,7 @@ public class ClipboardListener extends Thread {
                 try {
                     String contents = (String) clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor);
                     System.out.println("Original:  " + contents);
-                    contents = RandomFormatter.format(contents);
+//                    contents = RandomFormatter.format(contents);
 
                     // set clipboard's contents with new formatted stuff
                     Transferable t = new HtmlSelection(contents);
