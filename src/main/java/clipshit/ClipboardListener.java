@@ -20,7 +20,16 @@ public class ClipboardListener extends Thread {
             @Override
             public void run() {
                 try {
-                    System.out.println((String) clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor));
+                    String contents = (String) clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor);
+                    System.out.println("Original:  " + contents);
+                    contents = RandomFormatter.format(contents);
+
+//                    Transferable t = new HtmlSelection("<html><p>Hello <b>world!</b>");
+//
+//                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(t, null);
+
+                    System.out.println("Formatted:  " + contents);
+                    System.out.println();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
