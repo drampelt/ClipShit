@@ -4,17 +4,19 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ClipboardListener extends Thread {
-    private static Clipboard clipboard;
+    private Clipboard clipboard;
+    private ScheduledFuture<?> cancelObject;
+    private Runnable process;
+    private ScheduledExecutorService exec;
 
     @Override
     public void run() {
         clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
+        process = new Runnable() {
             @Override
             public void run() {
                 try {
@@ -23,6 +25,19 @@ public class ClipboardListener extends Thread {
                     e.printStackTrace();
                 }
             }
-        }, 0, 1, TimeUnit.SECONDS);
+        };
+
+        exec = Executors.newSingleThreadScheduledExecutor();
+        enable();
+    }
+
+    public void enable() {
+        System.out.println("ENABLED. Listening...");
+        cancelObject = exec.scheduleAtFixedRate(process, 0, 1, TimeUnit.SECONDS);
+    }
+
+    public void disable() {
+        System.out.println("DISABLED.");
+        cancelObject.cancel(false);
     }
 }
