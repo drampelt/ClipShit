@@ -69,6 +69,7 @@ public class Main {
                     toggle.setLabel("Disable");
                     status.setLabel("Status: Enabled");
                 }
+                enabled = !enabled;
             }
         });
 
