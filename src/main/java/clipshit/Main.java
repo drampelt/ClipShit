@@ -11,7 +11,12 @@ import java.net.URL;
  */
 public class Main {
 
-    public static void main2(String[] args) {
+    private static boolean enabled = true;
+    private static ClipboardListener clipboardListener;
+
+    public static void main(String[] args) {
+        clipboardListener = new ClipboardListener();
+        clipboardListener.start();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -20,12 +25,6 @@ public class Main {
         });
     }
 
-    public static void main(String[] args) {
-        ClipboardListener listener = new ClipboardListener();
-    }
-
-    private static boolean enabled = false;
-
     private static void createAndShowGUI() {
         if(!SystemTray.isSupported()) {
             System.out.println("Sorry we need your system tray bro");
@@ -33,13 +32,13 @@ public class Main {
         }
 
         final PopupMenu popup = new PopupMenu();
-        final TrayIcon trayIcon = new TrayIcon(createImage("clipshit.png", "Tray Icon"));
+        final TrayIcon trayIcon = new TrayIcon(createImage("/clipshit.png", "Tray Icon"));
 
         final SystemTray tray = SystemTray.getSystemTray();
 
         MenuItem exit = new MenuItem("Exit");
-        MenuItem status = new MenuItem("Status: Disabled");
-        MenuItem toggle = new MenuItem("Enable");
+        MenuItem status = new MenuItem("Status: Enabled");
+        MenuItem toggle = new MenuItem("Disable");
         status.setEnabled(false);
 
         popup.add(status);
@@ -66,12 +65,17 @@ public class Main {
         toggle.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println(enabled);
                 if(enabled) {
+                    System.out.println("disabling");
                     toggle.setLabel("Enable");
                     status.setLabel("Status: Disabled");
+                    clipboardListener.disable();
                 } else {
+                    System.out.println("enabling");
                     toggle.setLabel("Disable");
                     status.setLabel("Status: Enabled");
+                    clipboardListener.enable();
                 }
                 enabled = !enabled;
             }
@@ -92,7 +96,7 @@ public class Main {
 
         if (imageURL == null) {
             System.err.println("Resource not found: " + path);
-            return new ImageIcon(path, description).getImage();
+            return null;
         } else {
             return (new ImageIcon(imageURL, description)).getImage();
         }
