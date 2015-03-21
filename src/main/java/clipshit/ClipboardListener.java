@@ -3,53 +3,30 @@ package clipshit;
 import java.awt.*;
 import java.awt.datatransfer.*;
 
-public class ClipboardListener extends Thread implements ClipboardOwner {
+public class ClipboardListener {
     private static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-    private boolean isRunning = false;
+    private FlavorListener listener;
 
-    @Override
-    public void run() {
-        Transferable contents = clipboard.getContents(this);
-        takeOwnership(contents);
-        System.out.println("ENABLED.  Listening...");
-        isRunning = true;
-        while(isRunning) {
-            try {
-                ClipboardListener.sleep(1000);
-            } catch(Exception e) {
-                e.printStackTrace();
+    public ClipboardListener() {
+        listener = new FlavorListener() {
+            @Override
+            public void flavorsChanged(FlavorEvent e) {
+                System.out.println("changed!!! " + e.getSource() + " " + e.toString());
+                processClipboard();
             }
-        }
-        System.out.println("DISABLED");
-        this.interrupt();
+        };
+
+        enable();
     }
 
-    @Override
-    public void lostOwnership(Clipboard c, Transferable t) {
-        try {
-            ClipboardListener.sleep(250);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        Transferable contents = clipboard.getContents(this);
-
-        try {
-            processClipboard(contents, c);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        takeOwnership(contents);
+    public void enable() {
+        System.out.println("ENABLED.  Listening...");
+        clipboard.addFlavorListener(listener);
     }
 
-    private void takeOwnership(Transferable t) {
-        clipboard.setContents(t, this);
-    }
-
-    private void processClipboard(Transferable t, Clipboard c) {
+    private void processClipboard() {
         String tempText;
-        Transferable contents = t;
+        Transferable contents = clipboard.getContents(this);
 
         try {
             if(contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
@@ -62,6 +39,7 @@ public class ClipboardListener extends Thread implements ClipboardOwner {
     }
 
     public void disable() {
-        isRunning = false;
+        System.out.println("DISABLED.");
+        clipboard.removeFlavorListener(listener);
     }
 }

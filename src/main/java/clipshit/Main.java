@@ -11,13 +11,17 @@ import java.net.URL;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 createAndShowGUI();
             }
         });
+    }
+
+    public static void main(String[] args) {
+        ClipboardListener listener = new ClipboardListener();
     }
 
     private static boolean enabled = false;
@@ -29,7 +33,7 @@ public class Main {
         }
 
         final PopupMenu popup = new PopupMenu();
-        final TrayIcon trayIcon = new TrayIcon(createImage("main/clipshit.png", "Tray Icon"));
+        final TrayIcon trayIcon = new TrayIcon(createImage("clipshit.png", "Tray Icon"));
 
         final SystemTray tray = SystemTray.getSystemTray();
 
