@@ -3,10 +3,7 @@ package clipshit;
 import org.jsoup.Jsoup;
 
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.datatransfer.*;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringBufferInputStream;
@@ -22,15 +19,27 @@ public class ClipboardListener extends Thread {
     private ScheduledFuture<?> cancelObject;
     private Runnable process;
     private ScheduledExecutorService exec;
+    private boolean isTextFlavor = true;
 
     @Override
     public void run() {
         clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.addFlavorListener(new FlavorListener() {
+            @Override
+            public void flavorsChanged(FlavorEvent e) {
+                if(e.getClass().equals(DataFlavor.imageFlavor)) {
+                    isTextFlavor = false;
+                } else {
+                    isTextFlavor = true;
+                }
+            }
+        });
+
         process = new Runnable() {
             @Override
             public void run() {
                 try {
-                    if(clipboard.isDataFlavorAvailable(DataFlavor.imageFlavor)) {
+                    if(!isTextFlavor) {
                         Image contents = (Image) clipboard.getContents(this).getTransferData(DataFlavor.imageFlavor);
                         contents = ImageWatermarker.watermark(contents);
                         Transferable t = new ImageTransferable(contents);
@@ -47,6 +56,8 @@ public class ClipboardListener extends Thread {
                         System.out.println("Formatted:  " + contents);
                         System.out.println();
                     }
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
