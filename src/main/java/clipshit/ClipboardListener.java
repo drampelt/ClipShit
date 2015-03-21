@@ -5,19 +5,22 @@ import java.awt.datatransfer.*;
 
 public class ClipboardListener extends Thread implements ClipboardOwner {
     private static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    private boolean isRunning = false;
 
     @Override
     public void run() {
         Transferable contents = clipboard.getContents(this);
         takeOwnership(contents);
-        System.out.println("Listening...");
-        while(true) {
+        System.out.println("ENABLED.  Listening...");
+        isRunning = true;
+        while(isRunning) {
             try {
                 ClipboardListener.sleep(1000);
             } catch(Exception e) {
                 e.printStackTrace();
             }
         }
+        System.out.println("DISABLED");
     }
 
     @Override
@@ -39,11 +42,11 @@ public class ClipboardListener extends Thread implements ClipboardOwner {
         takeOwnership(contents);
     }
 
-    void takeOwnership(Transferable t) {
+    private void takeOwnership(Transferable t) {
         clipboard.setContents(t, this);
     }
 
-    public void processClipboard(Transferable t, Clipboard c) {
+    private void processClipboard(Transferable t, Clipboard c) {
         String tempText;
         Transferable contents = t;
 
@@ -57,4 +60,7 @@ public class ClipboardListener extends Thread implements ClipboardOwner {
         }
     }
 
+    public void disable() {
+        isRunning = false;
+    }
 }
