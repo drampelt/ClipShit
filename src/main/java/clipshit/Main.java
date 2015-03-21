@@ -33,6 +33,7 @@ public class Main {
 
         final PopupMenu popup = new PopupMenu();
         final TrayIcon trayIcon = new TrayIcon(createImage("/clipshit.png", "Tray Icon"));
+        trayIcon.setImageAutoSize(true);
 
         final SystemTray tray = SystemTray.getSystemTray();
 
