@@ -28,8 +28,6 @@ public class RandomFormatter {
             "line-height: 20px;",
             "text-indent: 20px;",
             "font-size: 32px;",
-            "font-size: 64px;",
-            "font-size: 80px;",
             "font-size: 5px;",
             "font-size: 10px;",
             "font-size: 16px;",
