@@ -15,12 +15,19 @@ public class RandomFormatter {
             "font-size: 64px;",
             "letter-spacing: 10px;",
             "text-transform: uppercase",
-            "text-decoration: overline;",
             "color: #ff0000;",
             "color: #00ff00;",
             "color: #FF40FF;",
             "line-height: 30px;",
-            "text-indent: 30px;"
+            "text-indent: 30px;",
+            "color: #4E8F00;",
+            "font-size: 128px;",
+            "font-size: 32px;",
+            "font-size: 8px;",
+            "font-weight: 100;",
+            "letter-spacing: -3px;",
+            "font-family: monospace;",
+            "font-family: \"Comic Sans MS\";"
     };
 
     public static String format(String in) {
@@ -55,7 +62,9 @@ public class RandomFormatter {
     }
 
     private static String getStyle() {
-        return formats[random.nextInt(formats.length)];
+        String ret = formats[random.nextInt(formats.length)];
+        if(random.nextFloat() > 0.6) ret += getStyle();
+        return ret;
     }
 
 }
