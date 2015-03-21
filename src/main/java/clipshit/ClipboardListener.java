@@ -21,6 +21,7 @@ public class ClipboardListener extends Thread implements ClipboardOwner {
             }
         }
         System.out.println("DISABLED");
+        this.interrupt();
     }
 
     @Override
