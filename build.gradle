@@ -47,7 +47,6 @@ launch4j {
     icon = "clipshit.ico"
 }
 
-
 buildscript {
     repositories {
         mavenCentral()
@@ -55,5 +54,6 @@ buildscript {
 
     dependencies {
         classpath 'edu.sc.seis.gradle:launch4j:1.0.6'
+//        classpath "edu.sc.seis.gradle:macappbundle:2.1.0"
     }
 }
