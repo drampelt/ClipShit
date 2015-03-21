@@ -39,7 +39,8 @@ public class ClipboardListener extends Thread {
             @Override
             public void run() {
                 try {
-                    if(!isTextFlavor) {
+                    if(clipboard.isDataFlavorAvailable(DataFlavor.imageFlavor)) {
+                        System.out.println("IMAGE!!!");
                         Image contents = (Image) clipboard.getContents(this).getTransferData(DataFlavor.imageFlavor);
                         contents = ImageWatermarker.watermark(contents);
                         Transferable t = new ImageTransferable(contents);
