@@ -19,21 +19,10 @@ public class ClipboardListener extends Thread {
     private ScheduledFuture<?> cancelObject;
     private Runnable process;
     private ScheduledExecutorService exec;
-    private boolean isTextFlavor = true;
 
     @Override
     public void run() {
         clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.addFlavorListener(new FlavorListener() {
-            @Override
-            public void flavorsChanged(FlavorEvent e) {
-                if(e.getClass().equals(DataFlavor.imageFlavor)) {
-                    isTextFlavor = false;
-                } else {
-                    isTextFlavor = true;
-                }
-            }
-        });
 
         process = new Runnable() {
             @Override
