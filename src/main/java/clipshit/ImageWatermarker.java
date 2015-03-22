@@ -27,9 +27,6 @@ public class ImageWatermarker {
 
         // paints the image watermark
         g2d.drawImage(watermark, topLeftX, topLeftY, width, height, null);
-        g2d.setFont(new Font("Comic Sans MS", Font.PLAIN, (int) (in.getHeight(null) * 0.05)));
-        g2d.setStroke(new BasicStroke(4));
-        g2d.drawString("This image has been blocked for your safety.", topLeftX, in.getHeight(null) - topLeftY - (int)(in.getHeight(null) * 0.05));
         g2d.dispose();
         return in;
     }

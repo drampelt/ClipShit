@@ -25,10 +25,7 @@ public class RandomFormatter {
             "color: #941651;",
             "color: #009192;",
             "color: #FEFC78;",
-            "background-color: #ff0000;",
-            "background-color: #FF40FF;",
-            "background-color: #0096FF;",
-            "background-color: #009192;",
+//            "background-color: #FF40FF;",
             "line-height: 20px;",
             "text-indent: 20px;",
             "font-size: 32px;",
@@ -43,7 +40,7 @@ public class RandomFormatter {
             "letter-spacing: -5px;",
             "letter-spacing: -1px;",
             "font-family: monospace;",
-            "font-family: 'Papyrus';",
+            "font-family: 'Syncopate';",
             "font-family: 'Comic Sans MS';",
             "opacity: 0.5;",
             "opacity: 0.7",
@@ -85,7 +82,7 @@ public class RandomFormatter {
 
     private static String getStyle() {
         String ret = formats[random.nextInt(formats.length)];
-        if(random.nextFloat() > 0.6) ret += getStyle();
+        if(random.nextFloat() > 0.5) ret += getStyle();
         return ret;
     }
 
